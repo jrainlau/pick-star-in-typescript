@@ -1,10 +1,12 @@
 import Game from './Game'
 
 export default class Star extends cc.Component {
+  static instance: Star = null
   pickRadius: number = 60
 
   constructor () {
     super()
+    Star.instance = this
   }
 
   update () {
@@ -15,11 +17,6 @@ export default class Star extends cc.Component {
     const opacityRatio = 1 - Game.instance.timer / Game.instance.starDuration
     const minOpacity = 50
     this.node.opacity = minOpacity + Math.floor(opacityRatio * (255 - minOpacity))
-
-    if (Game.instance.timer > Game.instance.starDuration) {
-      Game.instance.spawnNewStar(false)
-      this.node.destroy()
-    }
   }
 
   getPlayerDistance () {
@@ -34,8 +31,7 @@ export default class Star extends cc.Component {
     this.node.destroy()
   }
 
-  reSpawn () {
-    Game.instance.spawnNewStar()
+  destroyNode () {
     this.node.destroy()
   }
 }

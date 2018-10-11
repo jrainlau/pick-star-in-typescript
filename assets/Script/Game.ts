@@ -83,5 +83,7 @@ export default class Game extends cc.Component {
     this.score = 0
     this.timer = 0
     this.scoreNode.setScore(this.score)
+    Star.instance.destroyNode()
+    this.spawnNewStar(false)
   }
 }
