@@ -17,6 +17,7 @@ export default class Game extends cc.Component {
   starNode: any = null
   prefabStar: any = null
   scoreNode: Score = null
+  scoreAudio: any = null
 
   maxStarDuration: number = 0
   minStarDuration: number = 0
@@ -38,6 +39,8 @@ export default class Game extends cc.Component {
     this.node.addChild(this.playerNode = new PlayerNode())
     this.node.addChild(this.scoreNode = new Score())
     this.starNode = await loadRes('prefabs/star')
+
+    this.scoreAudio = await loadRes('audio/score')
 
     this.spawnNewStar()
   }
@@ -72,6 +75,7 @@ export default class Game extends cc.Component {
   gainScore () {
     this.score += 1
     this.scoreNode.setScore(this.score)
+    cc.audioEngine.play(this.scoreAudio, false, 1)
   }
 
   gameOver () {

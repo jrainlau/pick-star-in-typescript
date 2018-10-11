@@ -1,3 +1,4 @@
+import { loadRes } from '../utils/loader'
 const { ccclass } = cc._decorator
 
 @ccclass
@@ -10,15 +11,19 @@ export default class Player extends cc.Component {
   accRight: boolean = false
   xSpeed: number = 0
 
+  jumpAudio: any = null
+
   constructor () {
     super()
   }
 
-  onLoad () {
+  async onLoad () {
     this.node.runAction(this.setJumpAction())
 
     cc.systemEvent.on(cc.SystemEvent.EventType.KEY_DOWN, this.onKeyDown, this)
     cc.systemEvent.on(cc.SystemEvent.EventType.KEY_UP, this.onKeyUp, this)
+
+    this.jumpAudio = await loadRes('audio/jump', cc.AudioClip)
   }
 
   update (dt) {
@@ -38,7 +43,12 @@ export default class Player extends cc.Component {
   setJumpAction () {
     const jumpUp = cc.moveBy(this.jumpDuration, cc.v2(0, this.jumpHeight)).easing(cc.easeCubicActionOut())
     const jumpDown = cc.moveBy(this.jumpDuration, cc.v2(0, -this.jumpHeight)).easing(cc.easeCubicActionIn())
-    return cc.repeatForever(cc.sequence(jumpUp, jumpDown))
+    const callback = cc.callFunc(this.playJumpSound, this)
+    return cc.repeatForever(cc.sequence(jumpUp, jumpDown, callback))
+  }
+
+  playJumpSound () {
+    cc.audioEngine.play(this.jumpAudio, false, 1)
   }
 
   onKeyDown (event) {
